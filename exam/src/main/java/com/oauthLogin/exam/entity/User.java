@@ -34,6 +34,8 @@ public class User {
     // DB는 RoleType이라는 타입이 없다.
     @Enumerated(EnumType.STRING)
     private RoleType role; // ex) ADMIN, USER
+
+    private String oauth;
     @CreationTimestamp // 시간이 자동 입력
     private Timestamp createDate;
 }

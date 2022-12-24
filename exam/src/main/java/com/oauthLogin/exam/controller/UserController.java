@@ -5,12 +5,19 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oauthLogin.exam.entity.KakaoProfile;
 import com.oauthLogin.exam.entity.OauthToken;
+import com.oauthLogin.exam.entity.User;
 import com.oauthLogin.exam.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +31,14 @@ import java.util.UUID;
 @RestController
 public class UserController {
 
+    @Value("${cos.key}")
+    private String cosKey;
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @GetMapping("/auth/kakao/callback")
     public String kakaoCallback(String code) {
@@ -117,11 +130,36 @@ public class UserController {
         System.out.println("blog server username : " + kakaoProfile.getKakao_account().getEmail()
         + "_" + kakaoProfile.getId());
         System.out.println("blog server email : " + kakaoProfile.getKakao_account().getEmail());
+//        UUID : 중복되지 않는 어떤 특징 값을 만들어내는 알고리즘
+//        UUID garbagePassword = UUID.randomUUID();
+//        System.out.println("blog server password : " + garbagePassword);
+        System.out.println("blog server password : " + cosKey);
 
-        UUID garbagePassword = UUID.randomUUID();
-        System.out.println("blog server password : " + garbagePassword);
 
-        return response2.getBody();
+        User kakaoUser = User.builder()
+                .username(kakaoProfile.getKakao_account().getEmail() + "_" + kakaoProfile.getId())
+//                .password(garbagePassword.toString())
+                .password(cosKey)
+                .email(kakaoProfile.getKakao_account().getEmail())
+                .oauth("kakao")
+                .build();
+
+        // 가입자 혹은 비가입자 체크해서 처리
+        User originUser = userService.findUser(kakaoUser);
+
+        if(originUser.getUsername() == null) {
+            System.out.println("not a user yet --> start sign in");
+            userService.signIn(kakaoUser);
+        }
+        // 로그인 처리
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        kakaoUser.getUsername(), cosKey
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return "회원가입 및 로그인 처리 완료";
     }
 
 }
