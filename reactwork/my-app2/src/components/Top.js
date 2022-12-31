@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import "../App.css";
 
 const Top = () => {
-  const { username, number } = useSelector((store) => store.reducer);
+  const { username, number } = useSelector((state) => state.reducer);
   return (
     <div className="sub_container">
       <h1>Top</h1>
