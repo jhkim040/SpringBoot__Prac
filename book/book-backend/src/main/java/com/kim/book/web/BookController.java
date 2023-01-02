@@ -6,18 +6,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@CrossOrigin
 @RequiredArgsConstructor
 @RestController
 public class BookController {
 
     private final BookService bookService;
 
+
     @PostMapping("/book")
     public ResponseEntity<?> save(@RequestBody Book book) {
         // 200
         return new ResponseEntity<>(bookService.save(book), HttpStatus.CREATED);
     }
+
 
     @GetMapping("/book")
     public ResponseEntity<?> findAll() {
