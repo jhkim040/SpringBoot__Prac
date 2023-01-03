@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-@CrossOrigin
+@CrossOrigin // Controller 진입직전 작동
 @RequiredArgsConstructor
 @RestController
 public class BookController {
