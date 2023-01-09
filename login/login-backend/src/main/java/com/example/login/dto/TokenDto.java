@@ -15,4 +15,14 @@ public class TokenDto {
     private String grantType;
     private String accessToken;
     private Long tokenExpiresIn;
+
+    private String email;
+    private String nickname;
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
