@@ -47,13 +47,13 @@ public class MemberController {
     }
 
 
-    @PostMapping("/nickname")
+    @PutMapping("/nickname")
     public ResponseEntity<MemberResponseDto> setMemberNickname(@RequestBody MemberRequestDto request) {
         return ResponseEntity.ok(memberService.changeMemberNickname(request.getEmail(), request.getNickname()));
     }
 
 
-    @PostMapping("/password")
+    @PutMapping("/password")
     public ResponseEntity<MemberResponseDto> setMemberPassword(@RequestBody ChangePasswordRequestDto request) {
         return ResponseEntity.ok(memberService.changeMemberPassword(request.getEmail(), request.getExPassword(), request.getNewPassword()));
     }

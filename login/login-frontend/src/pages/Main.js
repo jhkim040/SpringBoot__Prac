@@ -89,10 +89,20 @@ const Main = () => {
         type="button"
         style={ButtonStyle}
         onClick={() => {
-          navigate('/update');
+          navigate('/nickname');
         }}
       >
-        Update Account
+        Change Nickname
+      </Button>
+      <Button
+        variant="secondary"
+        type="button"
+        style={ButtonStyle}
+        onClick={() => {
+          navigate('/password');
+        }}
+      >
+        Change Password
       </Button>
     </>
   );

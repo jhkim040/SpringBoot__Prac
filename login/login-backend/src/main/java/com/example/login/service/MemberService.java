@@ -52,7 +52,10 @@ public class MemberService {
     // 비밀번호 변경
     @Transactional
     public MemberResponseDto changeMemberPassword(String email, String exPassword, String newPassword) {
-        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
+//        Member member = memberRepository.findById(SecurityUtil.getCurrentMemberId()).orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
+
         if (!passwordEncoder.matches(exPassword, member.getPassword())) {
             throw new RuntimeException("비밀번호가 맞지 않습니다");
         }
