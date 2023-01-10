@@ -38,18 +38,7 @@ public class AuthService {
 
         Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
 
-//        return tokenProvider.generateTokenDto(authentication);
-        TokenDto loginToken = tokenProvider.generateTokenDto(authentication);
+        return tokenProvider.generateTokenDto(authentication);
 
-        String email = requestDto.getEmail();
-
-        if(!memberRepository.existsByEmail((email))) {
-            throw new RuntimeException("가입되지 않은 유저입니다.");
-        } else {
-            String nickname = memberRepository.findByEmail(email).get().getNickname();
-            loginToken.setEmail(email);
-            loginToken.setNickname(nickname);
-        }
-        return loginToken;
     }
 }

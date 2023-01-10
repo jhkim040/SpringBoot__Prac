@@ -7,6 +7,7 @@ import NicknameContext from './components/context/NicknameProvider';
 import Login from './pages/Login';
 import Main from './pages/Main';
 import Signup from './pages/Signup';
+import Update from './pages/Update';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/signup" exact={true} element={<Signup />} />
                 <Route path="/" exact={true} element={<Login />} />
                 <Route path="/user" exact={true} element={<Main />} />
+                <Route path="/update" exact={true} element={<Update />} />
               </Routes>
             </NicknameContext>
           </HttpHeadersContext>

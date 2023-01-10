@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../components/context/AuthProvider';
 import { HttpHeadersContext } from '../components/context/HttpHeadersProviders';
@@ -33,15 +33,13 @@ const Login = () => {
         console.log('로그인 시작');
         console.log(res.data);
 
-        alert(`${res.data.nickname}님, 로그인 완료!`);
+        alert(`로그인 완료!`);
 
         localStorage.setItem('accessToken', res.data.accessToken);
-        localStorage.setItem('email', res.data.email);
-        localStorage.setItem('nickname', res.data.nickname);
-
-        setAuth(res.data.email);
-        setHeaders({ Authorization: `Bearer ${res.data.accessToken}` });
-        setNickname(res.data.nickname);
+        setHeaders({
+          ...headers,
+          Authorization: `Bearer ${res.data.accessToken}`,
+        });
 
         navigate('/user');
       })

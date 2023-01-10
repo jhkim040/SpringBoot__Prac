@@ -1,50 +1,62 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../components/context/AuthProvider';
+import { HttpHeadersContext } from '../components/context/HttpHeadersProviders';
 import axios from 'axios';
+import { NicknameContext } from '../components/context/NicknameProvider';
 
-const Signup = () => {
+const Update = () => {
+  const { auth, setAuth } = useContext(AuthContext);
+  const { headers, setHeaders } = useContext(HttpHeadersContext);
+  const { nickname, setNickname } = useContext(NicknameContext);
+
   const navigate = useNavigate();
 
   const [userInfo, setUserInfo] = useState({
     email: '',
     password: '',
-    nickname: '',
   });
-
-  const onSignupHandler = async (e) => {
-    e.preventDefault();
-
-    await axios
-      .post('http://localhost:8080/auth/signup', userInfo)
-      .then((res) => {
-        console.log('회원가입 시작');
-        console.log(res.data);
-
-        alert(`${res.data.nickname}님, 회원가입 완료!`);
-
-        navigate('/');
-      })
-      .catch((err) => {
-        alert('회원가입 에러');
-        console.log(err);
-      });
-  };
-
   const onChangeHandler = (e) => {
     setUserInfo({
       ...userInfo,
       [e.target.name]: e.target.value,
     });
   };
+
+  const onUpdateHandler = async (e) => {
+    e.preventDefault();
+
+    await axios
+      .post('http://localhost:8080/auth/login', userInfo)
+      .then((res) => {
+        console.log('로그인 시작');
+        console.log(res.data);
+
+        alert(`로그인 완료!`);
+
+        localStorage.setItem('accessToken', res.data.accessToken);
+        setHeaders({
+          ...headers,
+          Authorization: `Bearer ${res.data.accessToken}`,
+        });
+
+        navigate('/user');
+      })
+      .catch((err) => {
+        alert('로그인 에러');
+        console.log(err);
+      });
+  };
+
   const ButtonStyle = {
     margin: '10px',
   };
 
   return (
     <>
-      <h1>Signup Page</h1>
-      <Form onSubmit={onSignupHandler}>
+      <h1>Update Page</h1>
+      <Form onSubmit={onUpdateHandler}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -52,13 +64,14 @@ const Signup = () => {
             type="email"
             placeholder="Enter email"
             onChange={onChangeHandler}
+            readOnly
           />
           <Form.Text className="text-muted">
             We'll never share your email with anyone else.
           </Form.Text>
         </Form.Group>
 
-        <Form.Group className="mb-3">
+        <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
             name="password"
@@ -68,8 +81,8 @@ const Signup = () => {
           />
         </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Nickname</Form.Label>
+        <Form.Group className="mb-3" controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
           <Form.Control
             name="nickname"
             type="text"
@@ -77,6 +90,7 @@ const Signup = () => {
             onChange={onChangeHandler}
           />
         </Form.Group>
+
         <Form.Group className="mb-3" controlId="formBasicCheckbox">
           <Form.Check type="checkbox" label="Check me out" />
         </Form.Group>
@@ -88,14 +102,14 @@ const Signup = () => {
           variant="secondary"
           type="button"
           onClick={() => {
-            navigate('/');
+            navigate('/signup');
           }}
         >
-          Login
+          Signup
         </Button>
       </Form>
     </>
   );
 };
 
-export default Signup;
+export default Update;

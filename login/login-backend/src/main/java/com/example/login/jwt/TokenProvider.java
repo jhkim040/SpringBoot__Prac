@@ -54,6 +54,10 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
+        System.out.println("============================");
+        System.out.println(authentication.getName());
+        System.out.println("============================");
+
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
@@ -106,5 +110,10 @@ public class TokenProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    //토큰에서 값 추출
+    public String getSubject(String accessToken) {
+        return Jwts.parser().setSigningKey(key).parseClaimsJws(accessToken).getBody().getSubject();
     }
 }

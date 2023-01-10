@@ -50,7 +50,7 @@ public class WebSecurityConfig {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/**").permitAll()
+                .antMatchers("/auth/**", "/member/**").permitAll()
                 // 모든 Requests에 있어서 /auth/**를 제외한 모든 uri의 request는 토큰이 필요
                 // /auth/**는 로그인 페이지
                 .anyRequest().authenticated()

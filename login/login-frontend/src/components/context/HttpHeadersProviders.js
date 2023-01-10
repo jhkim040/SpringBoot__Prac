@@ -5,6 +5,7 @@ export const HttpHeadersContext = createContext();
 
 const HttpHeadersProviders = ({ children }) => {
   const [headers, setHeaders] = useState({
+    'content-type': 'application/json',
     Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
   });
 

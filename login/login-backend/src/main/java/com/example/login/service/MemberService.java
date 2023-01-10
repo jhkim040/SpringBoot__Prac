@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 @Service
 @RequiredArgsConstructor
@@ -15,10 +17,26 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    @Transactional(readOnly = true)
+    public MemberResponseDto findByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .map(MemberResponseDto::of)
+                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
+    }
 
+    @Transactional(readOnly = true)
+    public MemberResponseDto findById(Long id) {
+        return memberRepository.findById(id)
+                .map(MemberResponseDto::of)
+                .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
+    }
+
+    // (세션에 저장되어 있을 때 가능)
     // 헤더에 있는 token값을 토대로 Member의 data를 건내줌
+    @Transactional
     public MemberResponseDto getMyInfoBySecurity() {
-        return memberRepository.findById(SecurityUtil.getCurrentMemberId())
+        return
+                memberRepository.findById(SecurityUtil.getCurrentMemberId())
                 .map(MemberResponseDto::of)
                 .orElseThrow(() -> new RuntimeException("로그인 유저 정보가 없습니다"));
     }
@@ -40,5 +58,18 @@ public class MemberService {
         }
         member.setPassword(passwordEncoder.encode((newPassword)));
         return MemberResponseDto.of(memberRepository.save(member));
+    }
+
+    @Transactional
+    public String deleteByEmail(String email) {
+
+        if(!memberRepository.existsByEmail(email)) {
+//            throw new RuntimeException("존재하지 않은 사용자입니다.");
+            return "fail";
+        } else {
+            Member member = memberRepository.findByEmail(email).get();
+            memberRepository.delete(member);
+            return "ok";
+        }
     }
 }
